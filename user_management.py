@@ -1,17 +1,24 @@
 import sqlite3 as sql
 import time
 import random
+import bcrypt
 
 
-def insertUser(username, password, DoB):
+def insertUser(username, password, DoB): #hash password and salt and hash
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
-    cur.execute(
-        "INSERT INTO users (username,password,dateOfBirth) VALUES (?,?,?)",
-        (username, password, DoB),
-    )
+    bytes = password.encode('utf-8') 
+    salt = bcrypt.gensalt() 
+    hash = bcrypt.hashpw(bytes, salt) 
+    
+    cur.execute(  "INSERT INTO users (username,password,dateOfBirth) VALUES (?,?,?)",
+    (username, hash, DoB), )
+    
+    
+    
     con.commit()
     con.close()
+    
 
 
 def retrieveUsers(username, password):

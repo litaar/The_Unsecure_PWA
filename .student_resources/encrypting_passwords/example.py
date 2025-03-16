@@ -12,10 +12,11 @@ my_password = "I Am All The Jedi"
 my_encoded_password = my_password.encode()
 
 # Salt to add to password before Hashing
-salt = b"$2b$12$ieYNkQp8QumgedUo30nuPO"
+salt = bcrypt.gensalt()
 
 # Hashed Password
-hashed_password = bcrypt.hashpw(password=my_encoded_password, salt=salt)
+hashed_password = bcrypt.hashpw(my_encoded_password, salt) 
+# hashed_password = bcrypt.hashpw(password=my_encoded_password, salt=salt)
 
 print(f"How actual password will appear in logs etc: {my_encoded_password.hex()}")
 
