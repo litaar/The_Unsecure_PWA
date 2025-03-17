@@ -11,11 +11,8 @@ def insertUser(username, password, DoB): #hash password and salt and hash
     salt = bcrypt.gensalt() 
     hash = bcrypt.hashpw(bytes, salt) 
     
-    cur.execute(  "INSERT INTO users (username,password,dateOfBirth) VALUES (?,?,?)",
-    (username, hash, DoB), )
-    
-    
-    
+    cur.execute(  "INSERT INTO users (username,password,dateOfBirth,salt) VALUES (?,?,?,?)",
+    (username, hash, DoB,salt), )
     con.commit()
     con.close()
     
@@ -24,11 +21,21 @@ def insertUser(username, password, DoB): #hash password and salt and hash
 def retrieveUsers(username, password):
     con = sql.connect("database_files/database.db")
     cur = con.cursor()
-    cur.execute(f"SELECT * FROM users WHERE username = '{username}'")
+    result=cur.execute(f"SELECT * FROM users WHERE username = '{username}'")
+    
+    print(result.fetchone())
+    #fetch one returns the first row 
+    #validate user sign in 
+    if password == '{hash}': 
+        return True
+    #write the code to now check the two hash values with bcrypt using the saved salt
+    #get the password
+    
     if cur.fetchone() == None:
         con.close()
         return False
-    else:
+    else:   
+        
         cur.execute(f"SELECT * FROM users WHERE password = '{password}'")
         # Plain text log of visitor count as requested by Unsecure PWA management
         with open("visitor_log.txt", "r") as file:
@@ -38,12 +45,18 @@ def retrieveUsers(username, password):
             file.write(str(number))
         # Simulate response time of heavy app for testing purposes
         time.sleep(random.randint(80, 90) / 1000)
+        result = cur.execute(f"SELECT * FROM users WHERE password = '{password}'")
+        print(username,password)
+        print(result.fetchone())
+        
         if cur.fetchone() == None:
             con.close()
             return False
         else:
             con.close()
             return True
+
+
 
 
 def insertFeedback(feedback):
