@@ -29,11 +29,10 @@ def retrieveSalt(username):
 
 
 # Create a function to hash and salt the users input to validate, hash pass using salt and given input pass
-def hashPass(password, salt):
+def hashPass(salt, password):
     pw = password.encode()
-    salt = bcrypt.salt()
     hash = bcrypt.hashpw(pw, salt)
-    result = bcrypt.checkpw(hash, salt)
+    # result = bcrypt.checkpw(hash, salt)
     return hash
 
 
@@ -51,7 +50,7 @@ def retrieveUsers(username, password):
         hashpw = hashPass(salt, password)
         print(hashpw)
         # valid username continued, make a get salt function
-        cur.execute(f"SELECT * FROM users WHERE password = '{password}'")
+        cur.execute(f"SELECT * FROM users WHERE password = (?)", (hashpw,))
         # Plain text log of visitor count as requested by Unsecure PWA management
         with open("visitor_log.txt", "r") as file:
             number = int(file.read().strip())
@@ -69,7 +68,6 @@ def retrieveUsers(username, password):
 
     # if result == password:
     # return True
-    hashpw = getHashedPass(salt, password)
 
 
 # print(result)
@@ -98,6 +96,5 @@ def listFeedback():
 
 # call retrieved users function using hash password
 
-retrieveUsers("hello", "password")
 
 # hashSalt("hello")
