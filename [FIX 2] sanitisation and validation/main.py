@@ -54,7 +54,8 @@ def home():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        isLoggedIn = dbHandler.retrieveUsers(username, password)
+        sanitized_username = sanitiser.make_web_safe(username)  # Sanitize username
+        isLoggedIn = dbHandler.retrieveUsers(sanitized_username, password)
         if isLoggedIn:
             dbHandler.listFeedback()
             return render_template("/success.html", value=username, state=isLoggedIn)
