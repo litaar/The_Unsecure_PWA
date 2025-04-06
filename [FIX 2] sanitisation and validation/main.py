@@ -18,7 +18,7 @@ def addFeedback():
         return redirect(url, code=302)
     if request.method == "POST":
         feedback = request.form["feedback"]
-        sanitized_feedback = sanitiser.make_web_safe(feedback)  # Sanitize feedback
+        sanitized_feedback = sanitiser.make_web_safe(feedback)  # sanitise feedback
         dbHandler.insertFeedback(sanitized_feedback)
         dbHandler.listFeedback()
 
@@ -37,7 +37,9 @@ def signup():
         username = request.form["username"]
         password = request.form["password"]
         DoB = request.form["dob"]
-        dbHandler.insertUser(username, password, DoB)
+        sanitized_username = sanitiser.make_web_safe(username)  # Sanitize username
+        sanitized_dob = sanitiser.make_web_safe(DoB)  # Sanitize date of birth
+        dbHandler.insertUser(sanitized_username, password, sanitized_dob)
         return render_template("/index.html")
     else:
         return render_template("/signup.html")
