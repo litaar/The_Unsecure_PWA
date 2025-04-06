@@ -3,6 +3,7 @@ from flask import render_template
 from flask import request
 from flask import redirect
 import user_management as dbHandler
+import data_handler as sanitiser
 
 # Code snippet for logging a message
 # app.logger.critical("message")
@@ -17,8 +18,10 @@ def addFeedback():
         return redirect(url, code=302)
     if request.method == "POST":
         feedback = request.form["feedback"]
-        dbHandler.insertFeedback(feedback)
+        sanitized_feedback = sanitiser.make_web_safe(feedback)  # Sanitize feedback
+        dbHandler.insertFeedback(sanitized_feedback)
         dbHandler.listFeedback()
+
         return render_template("/success.html", state=True, value="Back")
     else:
         dbHandler.listFeedback()
